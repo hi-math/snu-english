@@ -249,7 +249,7 @@ export default function TaskView({ taskId }: { taskId: number }) {
             <div className="write-meta-top">
               <div className="write-meta">
                 <span className={`wordcount${wordCount >= 40 ? ' ok' : ''}`}>
-                  {wordCount} 단어 <small>/ 최소 40</small>
+                  {wordCount} 단어
                 </span>
                 <span className="savestate">
                   <span className="dot" />

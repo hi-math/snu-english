@@ -18,6 +18,20 @@ function ensureDataDir() {
   }
 }
 
+// 데이터 폴더 경로 (DB · 업로드 이미지 등 영속 파일 저장 위치)
+export function getDataDir(): string {
+  return dataDir;
+}
+
+// 업로드 이미지 저장 폴더 (데이터 폴더 하위 uploads). 없으면 생성.
+export function getUploadsDir(): string {
+  const dir = path.join(dataDir, 'uploads');
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  return dir;
+}
+
 // Next.js dev 모드에서 hot-reload 시 커넥션이 중복 생성되는 것을 방지
 const globalForDb = globalThis as unknown as { __db?: Database.Database };
 

@@ -84,6 +84,7 @@ select {
   flex-direction: column;
   gap: 6px;
   margin-bottom: 14px;
+  min-width: 0; /* 그리드/플렉스 안에서 줄어들 수 있도록 */
 }
 .field label {
   font-weight: 600;
@@ -91,6 +92,8 @@ select {
 }
 .field input,
 .field select {
+  width: 100%;
+  min-width: 0;
   padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: 8px;

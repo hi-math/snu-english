@@ -240,6 +240,27 @@ function DataPanel() {
     load();
   }, [load]);
 
+  async function deleteOne(s: Submission) {
+    if (
+      !confirm(
+        `${s.grade}학년 ${s.class}반 ${s.number}번 ${s.name} 학생의 데이터(과제 1·2)를 삭제할까요? 되돌릴 수 없습니다.`
+      )
+    )
+      return;
+    const params = new URLSearchParams({ grade: s.grade, class: s.class, number: s.number });
+    await fetch(`/api/submissions?${params.toString()}`, { method: 'DELETE' });
+    load();
+  }
+
+  async function deleteAll() {
+    const scope = grade ? `${grade}학년 전체` : '전체';
+    if (!confirm(`${scope} 학생 데이터를 삭제할까요? 되돌릴 수 없습니다.`)) return;
+    if (!confirm('정말로 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.')) return;
+    const q = grade ? `?grade=${encodeURIComponent(grade)}` : '';
+    await fetch(`/api/submissions${q}`, { method: 'DELETE' });
+    load();
+  }
+
   const grouped = (() => {
     const map = new Map<string, { s: Submission; task1: string; task2: string }>();
     for (const sub of submissions) {
@@ -275,6 +296,14 @@ function DataPanel() {
               </option>
             ))}
           </select>
+          <div className="spacer" />
+          <button
+            className="btn btn-danger"
+            onClick={deleteAll}
+            disabled={grouped.length === 0}
+          >
+            {grade ? `${grade}학년 데이터 삭제` : '전체 데이터 삭제'}
+          </button>
         </div>
 
         <table>
@@ -286,6 +315,7 @@ function DataPanel() {
               <th style={{ width: 90 }}>이름</th>
               <th>과제 1</th>
               <th>과제 2</th>
+              <th style={{ width: 70 }}></th>
             </tr>
           </thead>
           <tbody>
@@ -297,11 +327,16 @@ function DataPanel() {
                 <td>{r.s.name}</td>
                 <td className="cell-content">{r.task1 || <span className="muted">-</span>}</td>
                 <td className="cell-content">{r.task2 || <span className="muted">-</span>}</td>
+                <td className="actions">
+                  <button className="icon-btn danger" onClick={() => deleteOne(r.s)}>
+                    삭제
+                  </button>
+                </td>
               </tr>
             ))}
             {grouped.length === 0 && (
               <tr>
-                <td colSpan={6} className="muted" style={{ textAlign: 'center', padding: 20 }}>
+                <td colSpan={7} className="muted" style={{ textAlign: 'center', padding: 20 }}>
                   아직 제출된 데이터가 없습니다.
                 </td>
               </tr>

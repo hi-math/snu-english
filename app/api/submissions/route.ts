@@ -33,3 +33,27 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ submissions: subs, grades });
 }
+
+// 제출 답안 삭제
+// - grade+class+number: 해당 학생의 답안(과제 1·2) 삭제
+// - grade 만: 해당 학년 전체 삭제
+// - 아무 것도 없으면: 전체 삭제
+export async function DELETE(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const grade = searchParams.get('grade');
+  const klass = searchParams.get('class');
+  const number = searchParams.get('number');
+
+  let info;
+  if (grade && klass && number) {
+    info = db
+      .prepare('DELETE FROM submissions WHERE grade = ? AND class = ? AND number = ?')
+      .run(grade, klass, number);
+  } else if (grade) {
+    info = db.prepare('DELETE FROM submissions WHERE grade = ?').run(grade);
+  } else {
+    info = db.prepare('DELETE FROM submissions').run();
+  }
+
+  return NextResponse.json({ ok: true, deleted: info.changes });
+}

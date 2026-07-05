@@ -86,8 +86,23 @@ function createDb(): Database.Database {
   return db;
 }
 
-export const db = globalForDb.__db ?? createDb();
-if (process.env.NODE_ENV !== 'production') globalForDb.__db = db;
+// 지연 초기화: 실제로 쿼리를 실행할 때 처음 DB를 연다.
+// (next build 의 'Collecting page data' 단계에서 모듈을 import 하는 것만으로
+//  DB 파일이 열리면서 SQLITE_BUSY / disk I/O error 가 나는 것을 방지)
+function getDb(): Database.Database {
+  if (globalForDb.__db) return globalForDb.__db;
+  const instance = createDb();
+  globalForDb.__db = instance;
+  return instance;
+}
+
+export const db = new Proxy({} as Database.Database, {
+  get(_target, prop, receiver) {
+    const real = getDb();
+    const value = Reflect.get(real as object, prop, receiver);
+    return typeof value === 'function' ? (value as Function).bind(real) : value;
+  },
+});
 
 export interface Student {
   id: number;

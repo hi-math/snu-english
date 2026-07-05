@@ -3,18 +3,26 @@ import path from 'path';
 import fs from 'fs';
 import { TASKS } from './tasks';
 
-// 로컬 데이터베이스 파일 위치 (data/app.db)
-const dataDir = path.join(process.cwd(), 'data');
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
-}
+// 데이터베이스 파일 위치.
+// 컨테이너 배포 시 영속 볼륨을 마운트하고 DATA_DIR 환경변수로 그 경로를 지정하세요.
+// (예: DATA_DIR=/data) — 지정하지 않으면 프로젝트의 data/ 폴더를 사용합니다.
+const dataDir = process.env.DATA_DIR
+  ? path.resolve(process.env.DATA_DIR)
+  : path.join(process.cwd(), 'data');
 
 const dbPath = path.join(dataDir, 'app.db');
+
+function ensureDataDir() {
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+}
 
 // Next.js dev 모드에서 hot-reload 시 커넥션이 중복 생성되는 것을 방지
 const globalForDb = globalThis as unknown as { __db?: Database.Database };
 
 function createDb(): Database.Database {
+  ensureDataDir();
   const db = new Database(dbPath);
   db.pragma('journal_mode = WAL');
 

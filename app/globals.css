@@ -658,11 +658,13 @@ select {
 /* ===== 관리자 ===== */
 .admin-shell {
   display: flex;
-  min-height: 100vh;
+  height: 100vh; /* 뷰포트 고정 */
+  overflow: hidden;
 }
 .sidebar {
   width: 230px;
   flex-shrink: 0;
+  height: 100vh; /* 콘텐츠 길이와 무관하게 사이즈 유지 */
   background: #1a1f2b;
   color: #cfd6e4;
   display: flex;
@@ -715,8 +717,11 @@ select {
 }
 .admin-main {
   flex: 1;
-  padding: 28px 34px 60px;
+  min-width: 0;
+  height: 100vh;
+  overflow-y: auto; /* 오른쪽 콘텐츠만 스크롤 */
   overflow-x: auto;
+  padding: 28px 34px 60px;
 }
 .admin-header {
   display: flex;

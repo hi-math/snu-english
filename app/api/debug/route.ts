@@ -13,12 +13,36 @@ export async function GET() {
     : path.join(process.cwd(), 'data');
   const dbPath = path.join(resolvedDataDir, 'app.db');
 
-  let filesInDataDir: string[] = [];
-  try {
-    filesInDataDir = fs.readdirSync(resolvedDataDir);
-  } catch (e) {
-    filesInDataDir = ['<readdir 실패: ' + (e as Error).message + '>'];
+  // 폴더 내 파일들의 크기(바이트)를 재귀적으로 수집
+  function listWithSizes(dir: string, prefix = ''): { file: string; bytes: number }[] {
+    const out: { file: string; bytes: number }[] = [];
+    let entries: fs.Dirent[] = [];
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true });
+    } catch (e) {
+      return [{ file: prefix + '<readdir 실패: ' + (e as Error).message + '>', bytes: 0 }];
+    }
+    for (const ent of entries) {
+      const full = path.join(dir, ent.name);
+      if (ent.isDirectory()) {
+        out.push(...listWithSizes(full, prefix + ent.name + '/'));
+      } else {
+        let bytes = 0;
+        try {
+          bytes = fs.statSync(full).size;
+        } catch {
+          bytes = -1;
+        }
+        out.push({ file: prefix + ent.name, bytes });
+      }
+    }
+    return out;
   }
+
+  const fileSizes = listWithSizes(resolvedDataDir);
+  const totalBytes = fileSizes.reduce((sum, f) => sum + Math.max(0, f.bytes), 0);
+  const filesInDataDir = fileSizes.map((f) => `${f.file} — ${(f.bytes / 1024).toFixed(1)} KB`);
+  const totalMB = (totalBytes / (1024 * 1024)).toFixed(2);
 
   let dbExists = false;
   let dbSizeBytes = 0;
@@ -63,6 +87,7 @@ export async function GET() {
     dbExists,
     dbSizeBytes,
     dbMtime,
+    totalDataDirMB: totalMB,
     filesInDataDir,
     writable,
     writeErr,

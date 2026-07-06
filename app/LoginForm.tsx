@@ -148,61 +148,11 @@ export default function LoginForm({
         {/* 오른쪽: 일러스트 */}
         <div className="login-illust">
           <div className="login-illust-inner">
-            <div
-              style={{
-                position: 'absolute',
-                top: '12%',
-                left: '16%',
-                width: 84,
-                height: 84,
-                borderRadius: '50%',
-                background: 'radial-gradient(circle at 35% 35%,#FFF4EE,#F0CDB6)',
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                bottom: -44,
-                left: -32,
-                width: '72%',
-                height: '56%',
-                borderRadius: '50% 50% 0 0',
-                background: '#8E4529',
-                opacity: 0.92,
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                bottom: -64,
-                right: -42,
-                width: '78%',
-                height: '64%',
-                borderRadius: '50% 50% 0 0',
-                background: '#7A3213',
-                opacity: 0.86,
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                bottom: -30,
-                left: '22%',
-                width: '60%',
-                height: '42%',
-                borderRadius: '50% 50% 0 0',
-                background: '#5E2810',
-                opacity: 0.7,
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                backgroundImage:
-                  'repeating-linear-gradient(45deg,rgba(255,255,255,0.05) 0 12px,transparent 12px 24px)',
-              }}
-            />
+            <div className="illust-sun" />
+            <div className="illust-hill illust-hill-1" />
+            <div className="illust-hill illust-hill-2" />
+            <div className="illust-hill illust-hill-3" />
+            <div className="illust-stripes" />
           </div>
         </div>
       </div>

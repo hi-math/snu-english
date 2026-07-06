@@ -17,6 +17,14 @@
   --ok: #2fb37a;
 }
 
+/* 과제 2: 다크그린 테마 (이 스코프 안의 var(--primary) 등이 초록으로 대체됨) */
+.theme-green {
+  --primary: #1f5c3d;
+  --primary-dark: #164a30;
+  --soft: #e3f1e9;
+  --danger: #7a3213;
+}
+
 html,
 body {
   margin: 0;
@@ -316,6 +324,67 @@ select {
   border-radius: 20px;
   background: linear-gradient(165deg, #d9a98f 0%, #bc6e4c 46%, #a8583c 100%);
   min-height: clamp(220px, 50vh, 500px);
+}
+/* 일러스트 도형 (색상은 테마별로 오버라이드) */
+.illust-sun {
+  position: absolute;
+  top: 12%;
+  left: 16%;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff4ee, #f0cdb6);
+}
+.illust-hill {
+  position: absolute;
+  border-radius: 50% 50% 0 0;
+}
+.illust-hill-1 {
+  bottom: -44px;
+  left: -32px;
+  width: 72%;
+  height: 56%;
+  background: #8e4529;
+  opacity: 0.92;
+}
+.illust-hill-2 {
+  bottom: -64px;
+  right: -42px;
+  width: 78%;
+  height: 64%;
+  background: #7a3213;
+  opacity: 0.86;
+}
+.illust-hill-3 {
+  bottom: -30px;
+  left: 22%;
+  width: 60%;
+  height: 42%;
+  background: #5e2810;
+  opacity: 0.7;
+}
+.illust-stripes {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.05) 0 12px,
+    transparent 12px 24px
+  );
+}
+
+/* 과제 2 다크그린: 일러스트 색상 오버라이드 */
+.theme-green .login-illust-inner {
+  background: linear-gradient(165deg, #3e8f63 0%, #2a6b47 46%, #1f5c3d 100%);
+}
+.theme-green .illust-hill-1 {
+  background: #1b5236;
+}
+.theme-green .illust-hill-2 {
+  background: #154028;
+}
+.theme-green .illust-hill-3 {
+  background: #0f3320;
 }
 
 /* ===== 상단바 ===== */

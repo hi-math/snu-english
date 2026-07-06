@@ -25,19 +25,18 @@ export default function Activity({ taskId }: { taskId: number }) {
 
   if (!ready) return null;
 
-  if (!student) {
-    return (
-      <LoginForm
-        taskId={taskId}
-        onSuccess={(s) => {
-          sessionStorage.setItem(storageKey, JSON.stringify(s));
-          setStudent(s);
-        }}
-      />
-    );
-  }
+  // 과제 2는 다크그린 테마
+  const themeClass = taskId === 2 ? 'theme-green' : undefined;
 
-  return (
+  const inner = !student ? (
+    <LoginForm
+      taskId={taskId}
+      onSuccess={(s) => {
+        sessionStorage.setItem(storageKey, JSON.stringify(s));
+        setStudent(s);
+      }}
+    />
+  ) : (
     <TaskView
       taskId={taskId}
       student={student}
@@ -47,4 +46,6 @@ export default function Activity({ taskId }: { taskId: number }) {
       }}
     />
   );
+
+  return <div className={themeClass}>{inner}</div>;
 }

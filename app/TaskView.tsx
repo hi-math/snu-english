@@ -1,15 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import type { TaskContent } from '@/lib/tasks';
-
-interface StudentSession {
-  grade: string;
-  class: string;
-  number: string;
-  name: string;
-}
+import type { StudentSession } from './LoginForm';
 
 // **볼드** 마크업을 <strong> 으로 렌더링
 function renderInline(text: string) {
@@ -18,7 +11,7 @@ function renderInline(text: string) {
   );
 }
 
-// 지시 글상자 → 디자인의 체크리스트 카드로 렌더링
+// 지시 글상자 → 체크리스트 카드
 function Checklist({ text }: { text: string }) {
   const lines = text.split('\n').filter((l) => l.trim() !== '');
   if (lines.length === 0) return null;
@@ -56,10 +49,16 @@ function fmt(sec: number) {
 
 const TIME_LIMIT = 1200; // 20분 (표시용, 강제 종료 없음)
 
-export default function TaskView({ taskId }: { taskId: number }) {
-  const router = useRouter();
+export default function TaskView({
+  taskId,
+  student,
+  onExit,
+}: {
+  taskId: number;
+  student: StudentSession;
+  onExit: () => void;
+}) {
   const [task, setTask] = useState<TaskContent | null>(null);
-  const [student, setStudent] = useState<StudentSession | null>(null);
   const [content, setContent] = useState('');
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [imgError, setImgError] = useState(false);
@@ -76,20 +75,13 @@ export default function TaskView({ taskId }: { taskId: number }) {
       .then((data) => setTask(data.task));
   }, [taskId]);
 
-  // 세션 확인 및 기존 답안 불러오기
+  // 기존 답안 불러오기
   useEffect(() => {
-    const raw = sessionStorage.getItem('student');
-    if (!raw) {
-      router.replace('/');
-      return;
-    }
-    const s: StudentSession = JSON.parse(raw);
-    setStudent(s);
-
+    loadedRef.current = false;
     fetch(
-      `/api/submission?grade=${encodeURIComponent(s.grade)}&class=${encodeURIComponent(
-        s.class
-      )}&number=${encodeURIComponent(s.number)}&task=${taskId}`
+      `/api/submission?grade=${encodeURIComponent(student.grade)}&class=${encodeURIComponent(
+        student.class
+      )}&number=${encodeURIComponent(student.number)}&task=${taskId}`
     )
       .then((r) => r.json())
       .then((data) => {
@@ -112,7 +104,6 @@ export default function TaskView({ taskId }: { taskId: number }) {
 
   const save = useCallback(
     async (value: string, silent = false) => {
-      if (!student) return;
       if (!silent) setStatus('saving');
       try {
         const res = await fetch('/api/submission', {
@@ -130,31 +121,20 @@ export default function TaskView({ taskId }: { taskId: number }) {
 
   // 자동 저장 (입력 후 1.2초 debounce)
   useEffect(() => {
-    if (!loadedRef.current || !student) return;
+    if (!loadedRef.current) return;
     setStatus('saving');
     const t = setTimeout(() => save(content, true).then(() => setStatus('saved')), 1200);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content]);
 
-  function logout() {
-    sessionStorage.removeItem('student');
-    router.replace('/');
-  }
-
   async function confirmSubmit() {
     setConfirmOpen(false);
     await save(content);
-    if (taskId === 1) {
-      router.push('/task2');
-    } else {
-      setDone(true);
-    }
+    setDone(true);
   }
 
-  const studentLabel = student
-    ? `${student.grade}학년 ${student.class}반 ${student.number}번 ${student.name}`
-    : '';
+  const studentLabel = `${student.grade}학년 ${student.class}반 ${student.number}번 ${student.name}`;
   const wordCount = (content.trim().match(/\S+/g) || []).length;
   const saveText = status === 'saving' ? '저장 중…' : status === 'error' ? '저장 실패' : '저장됨';
   const low = remaining <= 120;
@@ -171,9 +151,9 @@ export default function TaskView({ taskId }: { taskId: number }) {
           <p>
             {studentLabel} 님,
             <br />
-            과제에 참여해 주셔서 감사합니다.
+            과제 {taskId}에 참여해 주셔서 감사합니다.
           </p>
-          <button className="done-btn" onClick={logout}>
+          <button className="done-btn" onClick={onExit}>
             처음으로 돌아가기
           </button>
         </div>
@@ -281,9 +261,7 @@ export default function TaskView({ taskId }: { taskId: number }) {
         <div className="modal-overlay" onClick={() => setConfirmOpen(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h3>제출하시겠습니까?</h3>
-            <p className="muted">
-              {taskId === 1 ? '제출 후 과제 2로 이동합니다.' : '제출하면 응시가 완료됩니다.'}
-            </p>
+            <p className="muted">제출하면 응시가 완료됩니다.</p>
             <div className="modal-actions">
               <button className="btn btn-secondary" onClick={() => setConfirmOpen(false)}>
                 취소

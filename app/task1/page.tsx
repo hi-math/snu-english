@@ -1,5 +1,6 @@
-import TaskView from '../TaskView';
+import { redirect } from 'next/navigation';
 
-export default function Task1Page() {
-  return <TaskView taskId={1} />;
+// 구 URL 호환: /task1 → /t/1
+export default function Task1Redirect() {
+  redirect('/t/1');
 }

@@ -145,14 +145,41 @@ export default function LoginForm({
           </button>
         </form>
 
-        {/* 오른쪽: 일러스트 */}
+        {/* 오른쪽: 일러스트 (글쓰기 모티프) */}
         <div className="login-illust">
           <div className="login-illust-inner">
-            <div className="illust-sun" />
-            <div className="illust-hill illust-hill-1" />
-            <div className="illust-hill illust-hill-2" />
-            <div className="illust-hill illust-hill-3" />
-            <div className="illust-stripes" />
+            <svg
+              className="illust-svg"
+              viewBox="0 0 400 400"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              {/* 장식용 반투명 원 */}
+              <circle cx="72" cy="86" r="44" fill="rgba(255,255,255,0.13)" />
+              <circle cx="332" cy="322" r="66" fill="rgba(255,255,255,0.10)" />
+              <circle cx="350" cy="70" r="16" fill="rgba(255,255,255,0.18)" />
+
+              {/* 종이 */}
+              <g transform="rotate(-6 200 205)">
+                <rect x="116" y="86" width="168" height="228" rx="16" fill="#ffffff" />
+                <rect x="116" y="86" width="168" height="228" rx="16" fill="rgba(0,0,0,0.02)" />
+                {/* 글줄 */}
+                <rect x="140" y="126" width="120" height="11" rx="5.5" fill="#E7E2DC" />
+                <rect x="140" y="156" width="128" height="11" rx="5.5" fill="#E7E2DC" />
+                <rect x="140" y="186" width="96" height="11" rx="5.5" fill="#E7E2DC" />
+                <rect x="140" y="216" width="120" height="11" rx="5.5" fill="#E7E2DC" />
+                <rect x="140" y="246" width="70" height="11" rx="5.5" fill="#E7E2DC" />
+              </g>
+
+              {/* 연필 */}
+              <g transform="rotate(38 286 250)">
+                <rect x="276" y="150" width="20" height="150" rx="5" fill="#F4C15B" />
+                <rect x="276" y="150" width="20" height="18" fill="#EE9E52" />
+                <rect x="276" y="168" width="20" height="6" fill="#D98441" />
+                <polygon points="276,300 296,300 286,326" fill="#F1E6D0" />
+                <polygon points="282,315 290,315 286,326" fill="#3A3A3A" />
+              </g>
+            </svg>
           </div>
         </div>
       </div>

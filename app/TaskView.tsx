@@ -102,6 +102,17 @@ export default function TaskView({
     return () => clearInterval(t);
   }, [taskId]);
 
+  // 작성 중 브라우저 뒤로가기로 과제를 벗어나지 않도록 방지
+  // (예: /t/2 에서 뒤로가기 시 과제 1 로 이동하는 현상 차단)
+  useEffect(() => {
+    window.history.pushState(null, '', window.location.href);
+    const onPop = () => {
+      window.history.pushState(null, '', window.location.href);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
   const save = useCallback(
     async (value: string, silent = false) => {
       if (!silent) setStatus('saving');

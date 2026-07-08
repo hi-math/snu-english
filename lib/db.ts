@@ -70,6 +70,22 @@ function createDb(): Database.Database {
       instruction TEXT NOT NULL DEFAULT '',
       image TEXT NOT NULL DEFAULT ''
     );
+
+    CREATE TABLE IF NOT EXISTS surveys (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      grade TEXT NOT NULL,
+      class TEXT NOT NULL,
+      number TEXT NOT NULL,
+      name TEXT NOT NULL,
+      q1 TEXT NOT NULL DEFAULT '',
+      q2 INTEGER,
+      q3 INTEGER,
+      q4 INTEGER,
+      q5 TEXT NOT NULL DEFAULT '',
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      UNIQUE (grade, class, number)
+    );
   `);
 
   // 스키마 마이그레이션
@@ -142,6 +158,21 @@ export interface Submission {
   name: string;
   task: number;
   content: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Survey {
+  id: number;
+  grade: string;
+  class: string;
+  number: string;
+  name: string;
+  q1: string; // 영어권 거주 개월
+  q2: number | null; // 학습 기간 (1-4)
+  q3: number | null; // 주당 공부시간 (1-4)
+  q4: number | null; // 영작 경험 (1-4)
+  q5: string; // 어려웠던 부분 (자유서술)
   created_at: string;
   updated_at: string;
 }

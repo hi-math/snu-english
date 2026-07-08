@@ -227,6 +227,7 @@ function DataPanel() {
   const [grade, setGrade] = useState('');
   const [grades, setGrades] = useState<string[]>([]);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [surveyKeys, setSurveyKeys] = useState<Set<string>>(new Set());
 
   const load = useCallback(async () => {
     const q = grade ? `?grade=${encodeURIComponent(grade)}` : '';
@@ -234,6 +235,13 @@ function DataPanel() {
     const data = await res.json();
     setSubmissions(data.submissions ?? []);
     setGrades(data.grades ?? []);
+    const keys = new Set<string>(
+      (data.surveys ?? []).map(
+        (sv: { grade: string; class: string; number: string }) =>
+          `${sv.grade}|${sv.class}|${sv.number}`
+      )
+    );
+    setSurveyKeys(keys);
   }, [grade]);
 
   useEffect(() => {
@@ -315,28 +323,39 @@ function DataPanel() {
               <th style={{ width: 90 }}>이름</th>
               <th>과제 1</th>
               <th>과제 2</th>
+              <th style={{ width: 60 }}>설문</th>
               <th style={{ width: 70 }}></th>
             </tr>
           </thead>
           <tbody>
-            {grouped.map((r) => (
-              <tr key={`${r.s.grade}-${r.s.class}-${r.s.number}`}>
-                <td>{r.s.grade}</td>
-                <td>{r.s.class}</td>
-                <td>{r.s.number}</td>
-                <td>{r.s.name}</td>
-                <td className="cell-content">{r.task1 || <span className="muted">-</span>}</td>
-                <td className="cell-content">{r.task2 || <span className="muted">-</span>}</td>
-                <td className="actions">
-                  <button className="icon-btn danger" onClick={() => deleteOne(r.s)}>
-                    삭제
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {grouped.map((r) => {
+              const done = surveyKeys.has(`${r.s.grade}|${r.s.class}|${r.s.number}`);
+              return (
+                <tr key={`${r.s.grade}-${r.s.class}-${r.s.number}`}>
+                  <td>{r.s.grade}</td>
+                  <td>{r.s.class}</td>
+                  <td>{r.s.number}</td>
+                  <td>{r.s.name}</td>
+                  <td className="cell-content">{r.task1 || <span className="muted">-</span>}</td>
+                  <td className="cell-content">{r.task2 || <span className="muted">-</span>}</td>
+                  <td style={{ textAlign: 'center' }}>
+                    {done ? (
+                      <span style={{ color: 'var(--ok)', fontWeight: 700 }}>✓</span>
+                    ) : (
+                      <span className="muted">-</span>
+                    )}
+                  </td>
+                  <td className="actions">
+                    <button className="icon-btn danger" onClick={() => deleteOne(r.s)}>
+                      삭제
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
             {grouped.length === 0 && (
               <tr>
-                <td colSpan={7} className="muted" style={{ textAlign: 'center', padding: 20 }}>
+                <td colSpan={8} className="muted" style={{ textAlign: 'center', padding: 20 }}>
                   아직 제출된 데이터가 없습니다.
                 </td>
               </tr>

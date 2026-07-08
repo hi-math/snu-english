@@ -52,18 +52,17 @@ const TIME_LIMIT = 1200; // 20분 (표시용, 강제 종료 없음)
 export default function TaskView({
   taskId,
   student,
-  onExit,
+  onSubmitted,
 }: {
   taskId: number;
   student: StudentSession;
-  onExit: () => void;
+  onSubmitted: () => void;
 }) {
   const [task, setTask] = useState<TaskContent | null>(null);
   const [content, setContent] = useState('');
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [imgError, setImgError] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [done, setDone] = useState(false);
   const [remaining, setRemaining] = useState(TIME_LIMIT);
   const loadedRef = useRef(false);
 
@@ -142,35 +141,13 @@ export default function TaskView({
   async function confirmSubmit() {
     setConfirmOpen(false);
     await save(content);
-    setDone(true);
+    onSubmitted();
   }
 
   const studentLabel = `${student.grade}학년 ${student.class}반 ${student.number}번 ${student.name}`;
   const wordCount = (content.trim().match(/\S+/g) || []).length;
   const saveText = status === 'saving' ? '저장 중…' : status === 'error' ? '저장 실패' : '저장됨';
   const low = remaining <= 120;
-
-  // 완료 화면
-  if (done) {
-    return (
-      <div className="done-wrap">
-        <div className="done-card">
-          <div className="done-check">
-            <span />
-          </div>
-          <h1>제출이 완료되었습니다!</h1>
-          <p>
-            {studentLabel} 님,
-            <br />
-            과제 {taskId}에 참여해 주셔서 감사합니다.
-          </p>
-          <button className="done-btn" onClick={onExit}>
-            처음으로 돌아가기
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   if (!task) {
     return (
@@ -272,7 +249,9 @@ export default function TaskView({
         <div className="modal-overlay" onClick={() => setConfirmOpen(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h3>제출하시겠습니까?</h3>
-            <p className="muted">제출하면 응시가 완료됩니다.</p>
+            <p className="muted">
+              {taskId === 2 ? '제출 후 간단한 설문이 이어집니다.' : '제출하면 응시가 완료됩니다.'}
+            </p>
             <div className="modal-actions">
               <button className="btn btn-secondary" onClick={() => setConfirmOpen(false)}>
                 취소

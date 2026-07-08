@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import type { Submission } from '@/lib/db';
+import type { Submission, Survey } from '@/lib/db';
 
 // 관리자 페이지용: 제출 답안 목록 (grade 필터 선택)
 export async function GET(req: NextRequest) {
@@ -31,7 +31,13 @@ export async function GET(req: NextRequest) {
     .filter(Boolean)
     .sort((a, b) => Number(a) - Number(b));
 
-  return NextResponse.json({ submissions: subs, grades });
+  const surveys = (
+    grade
+      ? db.prepare('SELECT * FROM surveys WHERE grade = ?').all(grade)
+      : db.prepare('SELECT * FROM surveys').all()
+  ) as Survey[];
+
+  return NextResponse.json({ submissions: subs, surveys, grades });
 }
 
 // 제출 답안 삭제
@@ -49,10 +55,17 @@ export async function DELETE(req: NextRequest) {
     info = db
       .prepare('DELETE FROM submissions WHERE grade = ? AND class = ? AND number = ?')
       .run(grade, klass, number);
+    db.prepare('DELETE FROM surveys WHERE grade = ? AND class = ? AND number = ?').run(
+      grade,
+      klass,
+      number
+    );
   } else if (grade) {
     info = db.prepare('DELETE FROM submissions WHERE grade = ?').run(grade);
+    db.prepare('DELETE FROM surveys WHERE grade = ?').run(grade);
   } else {
     info = db.prepare('DELETE FROM submissions').run();
+    db.prepare('DELETE FROM surveys').run();
   }
 
   return NextResponse.json({ ok: true, deleted: info.changes });

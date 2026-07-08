@@ -626,6 +626,106 @@ select {
   }
 }
 
+/* ===== 설문 ===== */
+.survey-page {
+  min-height: 100vh;
+}
+.survey-body {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: clamp(18px, 3vw, 30px) clamp(16px, 3vw, 24px) 40px;
+}
+.survey-q {
+  margin-bottom: 14px;
+}
+.survey-label {
+  margin: 0 0 14px;
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.survey-num {
+  color: var(--primary);
+  font-weight: 800;
+  margin-right: 4px;
+}
+.survey-number {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.survey-number input {
+  width: 120px;
+  padding: 11px 12px;
+  border: 1.5px solid #e1e4ef;
+  border-radius: 10px;
+  font-size: 15px;
+}
+.survey-number input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--soft);
+}
+.survey-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.survey-choice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  padding: 12px 14px;
+  border: 1.5px solid #e7e9f3;
+  border-radius: 12px;
+  background: #fff;
+  color: #4a4f60;
+  font-size: 14.5px;
+  font-weight: 500;
+}
+.survey-choice:hover {
+  border-color: var(--primary);
+}
+.survey-choice.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  font-weight: 700;
+}
+.survey-choice-mark {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--soft);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+}
+.survey-choice.active .survey-choice-mark {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+.survey-text {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px 14px;
+  border: 1.5px solid #e1e4ef;
+  border-radius: 10px;
+  font-size: 15px;
+  line-height: 1.6;
+  resize: vertical;
+}
+.survey-text:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--soft);
+}
+
 /* ===== 완료 화면 ===== */
 .done-wrap {
   min-height: 100vh;

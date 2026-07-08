@@ -108,13 +108,9 @@ export default function Survey({
       </div>
 
       <div className="survey-body">
-        <span className="task-badge">SURVEY · 설문</span>
-        <h2 className="task-title" style={{ marginBottom: 6 }}>
-          마지막으로 간단한 설문에 응답해 주세요.
-        </h2>
-        <p className="muted" style={{ marginBottom: 20 }}>
-          정답은 없습니다. 평소 생각을 솔직하게 답해 주세요.
-        </p>
+        <span className="task-badge" style={{ marginBottom: 18 }}>
+          SURVEY · 설문
+        </span>
 
         {SURVEY_QUESTIONS.map((q, i) => (
           <div className="dcard survey-q" key={q.key}>
